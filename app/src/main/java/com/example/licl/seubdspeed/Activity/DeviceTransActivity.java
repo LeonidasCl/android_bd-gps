@@ -102,19 +102,6 @@ public class DeviceTransActivity extends Activity
             }
             return null;*/
             mTcpClient=TCPClient.getInstance();
-            mTcpClient.setHearBeatCountDownTimer(new CountDownTimer(Long.MAX_VALUE,10000) {
-                @Override
-                public void onTick(long l){
-                    Log.i("logmsg","excited::2::tick");
-                    if (mTcpClient!=null)
-                        mTcpClient.sendCheckin("1442","20b14bbaf");
-                }
-
-                @Override
-                public void onFinish() {
-                    Log.i("logmsg","excited::2::tick finish");
-                }
-            });
             mTcpClient.setListener(new TCPClient.OnMessageReceived(){
                 @Override
                 public void messageReceived(String message){

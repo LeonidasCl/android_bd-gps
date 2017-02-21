@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -314,7 +315,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 public void messageReceived(String message){
                     Log.i("logmsg","excited::2");
                     Gson gson=new Gson();
-                    Intent intent=new Intent(LoginActivity.this,DeviceTransActivity.class);
+
+                    //登录成功后就开始发送心跳包
+                    mTcpClient.setHearBeatCountDownTimer(new CountDownTimer(Long.MAX_VALUE,10000){
+                        @Override
+                        public void onTick(long l){
+                            Log.i("logmsg","excited::2::tick");
+                            if (mTcpClient!=null)
+                                mTcpClient.sendCheckin("1442","20b14bbaf");
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            Log.i("logmsg","excited::2::tick finish");
+                        }
+                    });
+
+                    Intent intent=new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(intent);
                     finish();
                 }
