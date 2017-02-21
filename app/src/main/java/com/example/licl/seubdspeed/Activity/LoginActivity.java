@@ -32,8 +32,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.licl.seubdspeed.BDAPPlication;
 import com.example.licl.seubdspeed.R;
-import com.example.licl.seubdspeed.Util.TCPClient;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -59,7 +59,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    private TCPClient mTcpClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setText("20b14bbaf");
     }
 
-    private void populateAutoComplete() {
+    private void populateAutoComplete(){
         if (!mayRequestContacts()) {
             return;
         }
@@ -308,35 +307,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            // Simulate network access.
-            mTcpClient= TCPClient.getInstance();
-            mTcpClient.setListener(new TCPClient.OnMessageReceived() {
-                @Override
-                public void messageReceived(String message){
-                    Log.i("logmsg","excited::2");
-                    Gson gson=new Gson();
-
-                    //登录成功后就开始发送心跳包
-                    mTcpClient.setHearBeatCountDownTimer(new CountDownTimer(Long.MAX_VALUE,10000){
-                        @Override
-                        public void onTick(long l){
-                            Log.i("logmsg","excited::2::tick");
-                            if (mTcpClient!=null)
-                                mTcpClient.sendCheckin("1442","20b14bbaf");
-                        }
-
-                        @Override
-                        public void onFinish() {
-                            Log.i("logmsg","excited::2::tick finish");
-                        }
-                    });
-
-                    Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            });
-            mTcpClient.sendCheckin(mEmail,mPassword);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             return true;
         }
@@ -347,6 +322,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+                Intent intnt=new Intent(LoginActivity.this,MainActivity.class);
+                startActivity(intnt);
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

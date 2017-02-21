@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-
 import com.example.licl.seubdspeed.Adapters.DeviceTransAdapter;
 import com.example.licl.seubdspeed.R;
 import com.example.licl.seubdspeed.Util.TCPClient;
@@ -101,13 +100,8 @@ public class DeviceTransActivity extends Activity
             	mTcpClient.sendMessage("Initial Message when connected with Socket Server");
             }
             return null;*/
-            mTcpClient=TCPClient.getInstance();
-            mTcpClient.setListener(new TCPClient.OnMessageReceived(){
-                @Override
-                public void messageReceived(String message){
-                    Log.i("logmsg","excited::2");
-                }
-            });
+            //mTcpClient=TCPClient;
+
             return null;
         }
  

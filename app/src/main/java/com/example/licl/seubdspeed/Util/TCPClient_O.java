@@ -11,12 +11,8 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 
-/**
- * @author Prashant Adesara
- * Handle the TCPClient with Socket Server. 
- * */
 
-public class TCPClient {
+public class TCPClient_O {
  
     private String serverMessage;
     /**
@@ -26,19 +22,31 @@ public class TCPClient {
     public static final int SERVERPORT = 8181;
     private OnMessageReceived mMessageListener = null;
     private boolean mRun = false;
- 
     private PrintWriter out = null;
     private BufferedReader in = null;
+    private OnMessageReceived listener;
     private CountDownTimer hearBeatCountDownTimer;
+
+    /*public static TCPClient getInstance(){
+        return InstanceHolder.instance;
+    }*/
+
+
+    public CountDownTimer getHearBeatCountDownTimer(){
+        return hearBeatCountDownTimer;
+    }
+
     public void setHearBeatCountDownTimer(CountDownTimer hearBeatCountDownTimer) {
         this.hearBeatCountDownTimer = hearBeatCountDownTimer;
         hearBeatCountDownTimer.start();
     }
-    
-    /**
-     *  Constructor of the class. OnMessagedReceived listens for the messages received from server
-     */
-    public TCPClient(final OnMessageReceived listener) 
+
+    /*private static class InstanceHolder
+    {
+        private static TCPClient instance = new TCPClient();
+    }*/
+
+    public TCPClient_O(final OnMessageReceived listener)
     {
         mMessageListener = listener;
     }
@@ -54,12 +62,19 @@ public class TCPClient {
             out.flush();
         }
     }
+
+    public void sendCheckin(String id,String pwd){
+       // if (out != null && !out.checkError()) {
+        out.println("{\"M\":\"checkin\",\"ID\":\""+id+"\",\"K\":\""+pwd+"\"}");
+        out.flush();
+       // }
+    }
  
     public void stopClient(){
         mRun = false;
     }
     
-    public void run() {
+    public void run(){
  
         mRun = true;
  
@@ -88,7 +103,7 @@ public class TCPClient {
                 	serverMessage = in.readLine();
  
                     if (serverMessage != null && mMessageListener != null) {
-                        //call the method messageReceived from MyActivity class
+                        //call the method messageReceived from DeviceTransActivity class
                         mMessageListener.messageReceived(serverMessage);
                         Log.e("RESPONSE FROM SERVER", "S: Received Message: '" + serverMessage + "'");
                     }
@@ -115,7 +130,7 @@ public class TCPClient {
  
     }
  
-    //Declare the interface. The method messageReceived(String message) will must be implemented in the MyActivity
+    //Declare the interface. The method messageReceived(String message) will must be implemented in the DeviceTransActivity
     //class at on asynckTask doInBackground
     public interface OnMessageReceived {
         public void messageReceived(String message);
