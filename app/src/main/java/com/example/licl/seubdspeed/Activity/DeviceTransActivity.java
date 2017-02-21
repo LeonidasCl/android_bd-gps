@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -65,15 +67,14 @@ public class DeviceTransActivity extends Activity
     }
     
     /**
-     * @author Prashant Adesara
      * receive the message from server with asyncTask  
      * */
-    public class connectTask extends AsyncTask<String,String,TCPClient> {
+    public class connectTask extends AsyncTask<String,String,TCPClient>{
         @Override
         protected TCPClient doInBackground(String... message)
         {
             //we create a TCPClient object and
-            mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() 
+            /*mTcpClient = new TCPClient(new TCPClient.OnMessageReceived()
             {
                 @Override
                 //here the messageReceived method is implemented
@@ -99,11 +100,32 @@ public class DeviceTransActivity extends Activity
             {
             	mTcpClient.sendMessage("Initial Message when connected with Socket Server");
             }
+            return null;*/
+            mTcpClient=TCPClient.getInstance();
+            mTcpClient.setHearBeatCountDownTimer(new CountDownTimer(Long.MAX_VALUE,10000) {
+                @Override
+                public void onTick(long l){
+                    Log.i("logmsg","excited::2::tick");
+                    if (mTcpClient!=null)
+                        mTcpClient.sendCheckin("1442","20b14bbaf");
+                }
+
+                @Override
+                public void onFinish() {
+                    Log.i("logmsg","excited::2::tick finish");
+                }
+            });
+            mTcpClient.setListener(new TCPClient.OnMessageReceived(){
+                @Override
+                public void messageReceived(String message){
+                    Log.i("logmsg","excited::2");
+                }
+            });
             return null;
         }
  
         @Override
-        protected void onProgressUpdate(String... values) {
+        protected void onProgressUpdate(String... values){
             super.onProgressUpdate(values);
  
             //in the arrayList we add the messaged received from server
@@ -132,6 +154,4 @@ public class DeviceTransActivity extends Activity
 		}
     	super.onDestroy();
     }
-  
-    
 }

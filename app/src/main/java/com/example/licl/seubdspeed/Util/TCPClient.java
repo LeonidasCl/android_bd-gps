@@ -1,5 +1,6 @@
 package com.example.licl.seubdspeed.Util;
 
+import android.os.CountDownTimer;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -21,16 +22,40 @@ public class TCPClient {
     public static final int SERVERPORT = 8181;
     private OnMessageReceived mMessageListener = null;
     private boolean mRun = false;
- 
     private PrintWriter out = null;
     private BufferedReader in = null;
-    
-    /**
-     *  Constructor of the class. OnMessagedReceived listens for the messages received from server
-     */
-    public TCPClient(final OnMessageReceived listener) 
+    private OnMessageReceived listener;
+    private CountDownTimer hearBeatCountDownTimer;
+
+    public static TCPClient getInstance(){
+        return InstanceHolder.instance;
+    }
+
+    public void setListener(OnMessageReceived listener) {
+        this.listener = listener;
+    }
+
+    public CountDownTimer getHearBeatCountDownTimer(){
+        return hearBeatCountDownTimer;
+    }
+
+    public void setHearBeatCountDownTimer(CountDownTimer hearBeatCountDownTimer) {
+        this.hearBeatCountDownTimer = hearBeatCountDownTimer;
+        hearBeatCountDownTimer.start();
+    }
+
+    private static class InstanceHolder
     {
-        mMessageListener = listener;
+        private static TCPClient instance = new TCPClient();
+    }
+
+    /**
+     *  写成静态内部类单例用于保持连接，此处直接开始连接，在需要用到时重新设置listener即可
+     */
+    private TCPClient()
+    {
+        //mMessageListener = listener;
+        getInstance().run();
     }
  
     /**
@@ -44,12 +69,19 @@ public class TCPClient {
             out.flush();
         }
     }
+
+    public void sendCheckin(String id,String pwd){
+        if (out != null && !out.checkError()) {
+        out.println("{\"M\":\"checkin\",\"ID\":\""+id+"\",\"K\":\""+pwd+"\"}");
+        out.flush();
+        }
+    }
  
     public void stopClient(){
         mRun = false;
     }
     
-    public void run() {
+    private void run(){
  
         mRun = true;
  
