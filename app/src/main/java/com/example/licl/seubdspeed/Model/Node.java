@@ -7,7 +7,8 @@ public class Node {
 
     private String name;
     private String desc;
-    private int id;
+    private String id;
+    private boolean isOnline;
 
     @Override
     public String toString() {
@@ -33,11 +34,19 @@ public class Node {
         this.desc = desc;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
     }
 }

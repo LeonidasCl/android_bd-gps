@@ -1,17 +1,29 @@
 package com.example.licl.seubdspeed.Adapters;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import com.example.licl.seubdspeed.Activity.DeviceTransActivity;
+import com.example.licl.seubdspeed.Activity.MainActivity;
+import com.example.licl.seubdspeed.BDAPPlication;
+import com.example.licl.seubdspeed.Fragment.MainFragment;
+import com.example.licl.seubdspeed.Fragment.SpeedFragment;
 import com.example.licl.seubdspeed.Model.Node;
 import com.example.licl.seubdspeed.R;
 
 import java.util.List;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Created by ekansh on 20/10/15.
@@ -61,8 +73,29 @@ public class NodeAdapter extends BaseAdapter {
         else
             viewHolder = (ViewHolder) view.getTag();
 
-        Node node = getItem(i);
+        final Node node = getItem(i);
         viewHolder.setValues(node);
+        viewHolder.communicate.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if (!node.isOnline()){
+                    Toast.makeText(BDAPPlication.getInstance(),"该节点不在线，不能对话",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent=new Intent(activity, DeviceTransActivity.class);
+                intent.putExtra("id",node.getId());
+                intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                BDAPPlication.getInstance().startActivity(intent);
+            }
+        });
+
+        viewHolder.speed.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                MainActivity actvt=(MainActivity)activity;
+                actvt.toSpeed(node.getId());
+            }
+        });
 
         return view;
     }
@@ -71,10 +104,14 @@ public class NodeAdapter extends BaseAdapter {
     private class ViewHolder {
         private TextView name;
         private TextView desc;
+        private Button communicate;
+        private Button speed;
 
         public ViewHolder(View view) {
             name = (TextView) view.findViewById(R.id.tv_name);
             desc = (TextView) view.findViewById(R.id.tv_desc);
+            communicate=(Button)view.findViewById(R.id.btn_communicate);
+            speed=(Button)view.findViewById(R.id.btn_map);
         }
 
         public void setValues(Node node) {

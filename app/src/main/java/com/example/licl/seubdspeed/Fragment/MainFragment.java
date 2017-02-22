@@ -1,4 +1,4 @@
-package com.example.licl.seubdspeed.Activity;
+package com.example.licl.seubdspeed.Fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.licl.seubdspeed.Adapters.NodeAdapter;
 import com.example.licl.seubdspeed.Model.Node;
@@ -26,7 +27,7 @@ public class MainFragment extends android.support.v4.app.Fragment {
     private NodeAdapter nodeAdapter;
     private ListView listView;
     private int bootCounter=0;
-    private int maxRecords = 400;
+    private int maxRecords = 25;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,13 +47,14 @@ public class MainFragment extends android.support.v4.app.Fragment {
         onScrollListener();
         onRefreshListener();
 
+
         return view;
     }
 
     private void onRefreshListener(){
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
             @Override
-            public void onRefresh() {
+            public void onRefresh(){
                 refreshLayout.setRefreshing(true);
                 bootCounter=0;
                 nodeAdapter.refresh(bootData());
@@ -71,6 +73,10 @@ public class MainFragment extends android.support.v4.app.Fragment {
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (firstVisibleItem + visibleItemCount > totalItemCount - 2 && totalItemCount < maxRecords) {
+                    if (bootCounter>15){
+                        Toast.makeText(getActivity(),"没有更多的节点了",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     nodeAdapter.add(bootData());
                     nodeAdapter.notifyDataSetChanged();
                 }
@@ -80,13 +86,26 @@ public class MainFragment extends android.support.v4.app.Fragment {
 
     private List<Node> bootData(){
         List<Node> nodes = new ArrayList<Node>();
-        for(int i=bootCounter;i<bootCounter+5;i++){
+        for(int i=bootCounter;i<bootCounter+10;i++){
             Node node = new Node();
             node.setName("节点" + i);
-            node.setId(i);
-            node.setDesc("这是测试节点" + i);
+            node.setId(String.valueOf(i));
+            if (i==0){
+                node.setDesc("节点" + i + " （在线）");
+                node.setId("D1426");
+                node.setOnline(true);
+            }
+            if (i>0&&i<3){
+                node.setDesc("节点" + i + " （离线）");
+                node.setOnline(false);
+            }
+            if (i>2){
+                node.setDesc("模拟节点" + i);
+                node.setOnline(false);
+            }
             nodes.add(node);
         }
+        bootCounter+=5;
         return nodes;
     }
 }
