@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Fragment aboutFrag;
     private TCPClient mTcpClient = null;
     private connectTask conctTask = null;
+
+
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
