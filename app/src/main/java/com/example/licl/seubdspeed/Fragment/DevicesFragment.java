@@ -34,6 +34,10 @@ public class DevicesFragment extends android.support.v4.app.Fragment {
     Marker marker2;
     Marker marker3;
 
+    public MapView getaMap(){
+        return mMapView;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -49,9 +53,9 @@ public class DevicesFragment extends android.support.v4.app.Fragment {
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         mMapView.onCreate(savedInstanceState);
 
-        if (aMap == null) {
-            aMap = mMapView.getMap();
-        }
+
+        aMap = mMapView.getMap();
+
 
         initMapPositions();
 
@@ -105,14 +109,15 @@ public class DevicesFragment extends android.support.v4.app.Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //在activity执行onResume时执行mMapView.onResume ()，重新绘制加载地图
-        mMapView.onResume();
+        //不用恢复重新绘制加载地图，直接全部重绘
+        //mMapView.onResume();
     }
     @Override
     public void onPause() {
         super.onPause();
         //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
         mMapView.onPause();
+        //mMapView.onDestroy();
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {

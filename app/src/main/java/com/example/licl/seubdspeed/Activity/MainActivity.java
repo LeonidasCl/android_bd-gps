@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.LatLng;
@@ -40,12 +41,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FragmentManager fragmentMgr;
     private FragmentTransaction fragmentTrs;
     private Fragment mainFrag;
-    private Fragment devicesFrag;
+    private DevicesFragment devicesFrag;
     private Fragment aboutFrag;
     private TCPClient mTcpClient = null;
     private connectTask conctTask = null;
     private SpeedFragment speedFrag;
     private boolean hasSpeedFrag=false;
+    private LinearLayout fragList=null;
 
 
     private Handler handler=new Handler(){
@@ -69,6 +71,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     };
+
+    public LinearLayout getFragList() {
+        return fragList;
+    }
+
+    public void setFragList(LinearLayout fragList) {
+        this.fragList = fragList;
+    }
+
     public class connectTask extends AsyncTask<String,String,TCPClient>{
         @Override
         protected TCPClient doInBackground(String... message)
@@ -153,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         about.setOnClickListener(this);
         fragmentMgr=getSupportFragmentManager();
         main.performClick();
+        fragList=(LinearLayout)findViewById(R.id.fragment_list);
 
         mTcpClient = null;
         // connect to the server
@@ -196,10 +208,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if(devicesFrag != null){
             fragmentTrs.hide(devicesFrag);
+            devicesFrag.getaMap().onDestroy();
         }
         if(aboutFrag != null){
             fragmentTrs.hide(aboutFrag);
         }
+        fragList.setVisibility(View.GONE);
         speedFrag = new SpeedFragment();
         speedFrag.setNodeID(nodeID);
         fragmentTrs.add(R.id.fl_content,speedFrag);
@@ -218,12 +232,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void toDevices(){
-        if (devicesFrag==null){
+        //if (devicesFrag==null){
             devicesFrag=new DevicesFragment();
             fragmentTrs.add(R.id.fl_content,devicesFrag);
-        }else {
+        /*}else {
             fragmentTrs.show(devicesFrag);
-        }
+        }*/
     }
 
     private void toMain() {
@@ -245,6 +259,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if(devicesFrag != null){
             fragmentTrs.hide(devicesFrag);
+            devicesFrag.getaMap().onPause();
+            devicesFrag.getaMap().onDestroy();
         }
         if(aboutFrag != null){
             fragmentTrs.hide(aboutFrag);
@@ -296,9 +312,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed(){
-        super.onBackPressed();
-        if (hasSpeedFrag){
-            //TODO 如果有测速面板 按返回键只是关掉测速面板 如果没有测速面板 按返回键两次会退出应用
+        fragmentTrs=fragmentMgr.beginTransaction();
+        if (hasSpeedFrag&&speedFrag!=null){
+            speedFrag.getaMap().onPause();
+            speedFrag.getaMap().onDestroy();
+            fragmentTrs.hide(speedFrag);
+            speedFrag=null;
+            hasSpeedFrag=false;
+            fragList.setVisibility(View.VISIBLE);
         }
+        setSelected();
+        main.setSelected(true);
+        toMain();
+        fragmentTrs.commit();
     }
 }

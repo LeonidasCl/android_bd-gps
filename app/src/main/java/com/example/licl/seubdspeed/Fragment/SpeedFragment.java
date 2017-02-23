@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdate;
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 设备地图表 一级页面
+ * 设备速度表 一级页面
  * Created by 李嘉文 on 2017/2/21.
  */
 public class SpeedFragment extends android.support.v4.app.Fragment {
@@ -39,7 +41,13 @@ public class SpeedFragment extends android.support.v4.app.Fragment {
     private String nodeID;
     List<LatLng> latLngs = new ArrayList<LatLng>();
     Polyline polyline;
+    private TextView tv_speed;
+    private Button btn_devices;
+    private Button btn_history;
 
+    public MapView getaMap(){
+        return mMapView;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState){
@@ -66,15 +74,18 @@ public class SpeedFragment extends android.support.v4.app.Fragment {
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         mMapView.onCreate(savedInstanceState);
 
-        if (aMap == null) {
-            aMap = mMapView.getMap();
-        }
+        aMap = mMapView.getMap();
+
 
         //initMapPositions();
         polyline=aMap.addPolyline(new PolylineOptions().addAll(latLngs).width(10).color(Color.argb(255, 1, 1, 1)));
 
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(BDAPPlication.getInstance().newestPosition.latitude,BDAPPlication.getInstance().newestPosition.longitude),18,30,0));
         aMap.moveCamera(mCameraUpdate);
+
+        tv_speed=(TextView)view.findViewById(R.id.tv_speed);
+        btn_devices=(Button)view.findViewById(R.id.btn_nodeinfo);
+        btn_history=(Button)view.findViewById(R.id.btn_nodehistory);
 
         return view;
     }
@@ -93,6 +104,12 @@ public class SpeedFragment extends android.support.v4.app.Fragment {
         newLine.add(latLngs.get(size-1));
         //添加一条线段
         aMap.addPolyline(new PolylineOptions().addAll(newLine).width(10).color(Color.argb(255, 1, 1, 1)));
+        //更新速度选项
+        if (v>1)
+            tv_speed.setText(String.valueOf(v));
+        //更新地图camera
+        CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(BDAPPlication.getInstance().newestPosition.latitude,BDAPPlication.getInstance().newestPosition.longitude),18,30,0));
+        aMap.moveCamera(mCameraUpdate);
     }
 
 
@@ -105,14 +122,15 @@ public class SpeedFragment extends android.support.v4.app.Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //在activity执行onResume时执行mMapView.onResume ()，重新绘制加载地图
-        mMapView.onResume();
+        //不用恢复重新绘制加载地图，直接全部重绘
+        //mMapView.onResume();
     }
     @Override
     public void onPause() {
         super.onPause();
         //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
         mMapView.onPause();
+        //mMapView.onDestroy();
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {

@@ -12,7 +12,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <LinearLayout
-        android:layout_weight="1"
+        android:layout_weight="4"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -44,7 +44,8 @@
 </LinearLayout>
 
     <LinearLayout
-        android:layout_weight="2"
+        android:layout_weight="5"
+        android:paddingLeft="5dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -52,6 +53,7 @@
         <Button
             android:layout_width="wrap_content"
             android:id="@+id/btn_communicate"
+            android:background="@drawable/shape2"
             android:layout_weight="2"
             android:text="对话"
             android:layout_height="match_parent"/>
@@ -59,6 +61,8 @@
         <Button
             android:layout_width="wrap_content"
             android:id="@+id/btn_map"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/shape2"
             android:layout_weight="2"
             android:text="查看"
             android:layout_height="match_parent" />
