@@ -45,6 +45,8 @@ public class DeviceTransActivity extends Activity
         public void handleMessage(Message msg){
             super.handleMessage(msg);
             if (msg.what==0){
+                if (mTcpClient==null)
+                    return;
                 mTcpClient.setHearBeatCountDownTimer(new CountDownTimer(Long.MAX_VALUE,20000){
                     @Override
                     public void onTick(long l){
@@ -236,4 +238,10 @@ public class DeviceTransActivity extends Activity
         super.onStop();
     }
 
+    @Override
+    public void onBackPressed() {//返回的时候直接销毁，不保存在后台
+        this.onStop();
+        this.onDestroy();
+        super.onBackPressed();
+    }
 }

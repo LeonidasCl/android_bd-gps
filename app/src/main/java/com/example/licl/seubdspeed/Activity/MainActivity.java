@@ -207,16 +207,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             fragmentTrs.hide(mainFrag);
         }
         if(devicesFrag != null){
-            fragmentTrs.hide(devicesFrag);
-            devicesFrag.getaMap().onDestroy();
+            if (devicesFrag.getaMap()!=null){
+            devicesFrag.getaMap().onPause();
+            devicesFrag.getaMap().onDestroy();}
+            fragmentTrs.hide(devicesFrag);//TODO crash bugfix
         }
         if(aboutFrag != null){
             fragmentTrs.hide(aboutFrag);
         }
         fragList.setVisibility(View.GONE);
-        speedFrag = new SpeedFragment();
+        //if (speedFrag==null){
+        speedFrag=null;
+            speedFrag = new SpeedFragment();
+            fragmentTrs.add(R.id.fl_content,speedFrag);
+        //}
         speedFrag.setNodeID(nodeID);
-        fragmentTrs.add(R.id.fl_content,speedFrag);
         fragmentTrs.show(speedFrag);
         fragmentTrs.commit();
         hasSpeedFrag=true;
@@ -231,17 +236,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void toDevices(){
+    private void toDevices(){//TODO crash bugfix
         //if (devicesFrag==null){
+        //devicesFrag=null;
             devicesFrag=new DevicesFragment();
             fragmentTrs.add(R.id.fl_content,devicesFrag);
-        /*}else {
+        //}else {
             fragmentTrs.show(devicesFrag);
-        }*/
+        //}
     }
 
     private void toMain() {
-        //BDAPPlication.getInstance().getmTcpClient().sendCheckin("1442","20b14bbaf");
         if(mainFrag == null){
             mainFrag = new MainFragment();
             fragmentTrs.add(R.id.fl_content,mainFrag);
@@ -259,8 +264,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if(devicesFrag != null){
             fragmentTrs.hide(devicesFrag);
-            devicesFrag.getaMap().onPause();
-            devicesFrag.getaMap().onDestroy();
         }
         if(aboutFrag != null){
             fragmentTrs.hide(aboutFrag);
@@ -311,13 +314,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed(){//TODO crash bugfix
         fragmentTrs=fragmentMgr.beginTransaction();
         if (hasSpeedFrag&&speedFrag!=null){
+            if (speedFrag.getaMap()!=null){
             speedFrag.getaMap().onPause();
-            speedFrag.getaMap().onDestroy();
+            speedFrag.getaMap().onDestroy();}
             fragmentTrs.hide(speedFrag);
-            speedFrag=null;
+            //speedFrag=null;
             hasSpeedFrag=false;
             fragList.setVisibility(View.VISIBLE);
         }

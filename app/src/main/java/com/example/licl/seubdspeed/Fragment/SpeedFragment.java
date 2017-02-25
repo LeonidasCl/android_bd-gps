@@ -73,9 +73,9 @@ public class SpeedFragment extends android.support.v4.app.Fragment {
         mMapView = (MapView) view.findViewById(R.id.mapb);
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         mMapView.onCreate(savedInstanceState);
-
-        aMap = mMapView.getMap();
-
+        //if (aMap == null) {
+            aMap = mMapView.getMap();
+        //}
 
         //initMapPositions();
         polyline=aMap.addPolyline(new PolylineOptions().addAll(latLngs).width(10).color(Color.argb(255, 1, 1, 1)));
@@ -115,26 +115,28 @@ public class SpeedFragment extends android.support.v4.app.Fragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，销毁地图
+        super.onDestroy();
+        if (mMapView!=null)
         mMapView.onDestroy();
     }
     @Override
     public void onResume() {
         super.onResume();
-        //不用恢复重新绘制加载地图，直接全部重绘
-        //mMapView.onResume();
+        if (mMapView!=null)
+        mMapView.onResume();
     }
     @Override
     public void onPause() {
         super.onPause();
+        if (mMapView!=null)
         //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
         mMapView.onPause();
-        //mMapView.onDestroy();
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (mMapView!=null)
         //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，保存地图当前的状态
         mMapView.onSaveInstanceState(outState);
     }
