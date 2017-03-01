@@ -106,6 +106,9 @@ public class DevicesFragment extends android.support.v4.app.Fragment {
         if (mMapView!=null)
         mMapView.onDestroy();
     }
+
+
+
     @Override
     public void onResume() {
         super.onResume();

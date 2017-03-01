@@ -29,6 +29,7 @@ import com.example.licl.seubdspeed.Util.Status;
 import com.example.licl.seubdspeed.Util.TCPClient;
 import com.google.gson.Gson;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +49,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SpeedFragment speedFrag;
     private boolean hasSpeedFrag=false;
     private LinearLayout fragList=null;
+
+    /*private static class CopyFileHandler extends Handler {
+        WeakReference<MainActivity> mActivity;
+        public CopyFileHandler(MainActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        public void handleMessage(Message msg) {
+            final MainActivity activity = mActivity.get();
+            //handle you message here!
+        }
+    }*/
 
 
     private Handler handler=new Handler(){
@@ -79,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void setFragList(LinearLayout fragList) {
         this.fragList = fragList;
     }
+
 
     public class connectTask extends AsyncTask<String,String,TCPClient>{
         @Override
