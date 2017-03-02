@@ -107,6 +107,8 @@ public class SpeedFragment extends android.support.v4.app.Fragment {
         //更新速度选项
         if (v>1)
             tv_speed.setText(String.valueOf(v));
+        else
+            tv_speed.setText("0");
         //更新地图camera
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(BDAPPlication.getInstance().newestPosition.latitude,BDAPPlication.getInstance().newestPosition.longitude),18,30,0));
         aMap.moveCamera(mCameraUpdate);
