@@ -83,7 +83,7 @@ public class SpeedFragment extends android.support.v4.app.Fragment {
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(BDAPPlication.getInstance().newestPosition.latitude,BDAPPlication.getInstance().newestPosition.longitude),18,30,0));
         aMap.moveCamera(mCameraUpdate);
 
-        tv_speed=(TextView)view.findViewById(R.id.tv_speed);
+        tv_speed=(TextView)view.findViewById(R.id.tvss_speed);
         btn_devices=(Button)view.findViewById(R.id.btn_nodeinfo);
         btn_history=(Button)view.findViewById(R.id.btn_nodehistory);
 
@@ -105,10 +105,10 @@ public class SpeedFragment extends android.support.v4.app.Fragment {
         //添加一条线段
         aMap.addPolyline(new PolylineOptions().addAll(newLine).width(10).color(Color.argb(255, 1, 1, 1)));
         //更新速度选项
-        if (v>1)
-            tv_speed.setText(String.valueOf(v));
-        else
-            tv_speed.setText("0");
+        //if (v>1)
+            tv_speed.setText("9");
+        /*else
+            tv_speed.setText("0");*/
         //更新地图camera
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(BDAPPlication.getInstance().newestPosition.latitude,BDAPPlication.getInstance().newestPosition.longitude),18,30,0));
         aMap.moveCamera(mCameraUpdate);
