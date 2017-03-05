@@ -1,5 +1,6 @@
 package com.example.licl.seubdspeed.Activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.CountDownTimer;
@@ -44,13 +45,14 @@ public class SpeedActivity extends AppCompatActivity {
     List<LatLng> latLngs = new ArrayList<LatLng>();
     Polyline polyline;
     private TextView tv_speed;
+    private boolean firstCall=true;
 
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg){
             super.handleMessage(msg);
             if (msg.what==0){
-                mTcpClient.setHearBeatCountDownTimer(new CountDownTimer(Long.MAX_VALUE,30000){
+                mTcpClient.setHearBeatCountDownTimer(new CountDownTimer(Long.MAX_VALUE,20000){
                     @Override
                     public void onTick(long l){
                         Log.i("logmsg","excited::2::tick");
@@ -63,6 +65,12 @@ public class SpeedActivity extends AppCompatActivity {
                         Log.i("logmsg","excited::2::tick finish");
                     }
                 });
+            }else if (msg.what==1){
+                int v=(int)msg.obj;
+                if (v==0){
+                    tv_speed.setText("0");
+                    return;}
+                tv_speed.setText(String.valueOf(v));
             }
         }
     };
@@ -104,27 +112,46 @@ public class SpeedActivity extends AppCompatActivity {
         btn_devices=(Button)findViewById(R.id.btn_nodeinfo);
         btn_history=(Button)findViewById(R.id.btn_nodehistory);
 
+        nodeID=getIntent().getStringExtra("nid");
+
+        tv_speed.setText("...");
+
     }
 
     public void update(int v){
         for (int i=0;i<BDAPPlication.getInstance().historyDatas.size();i++){
-            if (BDAPPlication.getInstance().historyDatas.get(i).getNodeID().equals(nodeID)){
+            if (BDAPPlication.getInstance().historyDatas.get(i).getNodeID().equals(nodeID)){//如果是自己
                 ArrayList<SinglePosition> positionAndTime=BDAPPlication.getInstance().historyDatas.get(i).getPositionAndTime();
                 int j=positionAndTime.size();
+                if (firstCall){//首次调用的时候多加两个点，以画出第一条线
+                    if (j>2)
+                    {
+                        latLngs.add(positionAndTime.get(j-3).getPosition());
+                        latLngs.add(positionAndTime.get(j-2).getPosition());
+                    }
+                    firstCall=false;
+                }
                 latLngs.add(positionAndTime.get(j-1).getPosition());//将最后一组经纬度加入数据集
             }
         }
         int size=latLngs.size();
+        if (size<2)
+            return;
         List<LatLng> newLine = new ArrayList<LatLng>();//将最新的两个点绘制为线段
         newLine.add(latLngs.get(size-2));
         newLine.add(latLngs.get(size-1));
         //添加一条线段
         aMap.addPolyline(new PolylineOptions().addAll(newLine).width(10).color(Color.argb(255, 1, 1, 1)));
         //更新速度选项
-        //if (v>1)
-        tv_speed.setText("9");
-        /*else
-            tv_speed.setText("0");*/
+        int updatev=0;
+        if (v>1)
+            updatev=v;
+        else
+            updatev=0;
+        Message msg=new Message();
+        msg.obj=updatev;
+        msg.what=1;
+        handler.sendMessage(msg);
         //更新地图camera
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(BDAPPlication.getInstance().newestPosition.latitude,BDAPPlication.getInstance().newestPosition.longitude),18,30,0));
         aMap.moveCamera(mCameraUpdate);
@@ -235,10 +262,18 @@ public class SpeedActivity extends AppCompatActivity {
             mTcpClient.run();
             if(mTcpClient!=null)
             {
-                mTcpClient.sendMessage("Initial Message when connected with Socket Server");
+                mTcpClient.sendMessage("{\"M\":\"checkin\",\"ID\":\"1442\",\"K\":\"20b14bbaf\"}\n");
+                update(0);
             }
             return null;
         }
+    }
+
+    @Override
+    public void onBackPressed(){//返回的时候直接销毁，不保存在后台，并直接新建Main
+        Intent intnt=new Intent(SpeedActivity.this,MainActivity.class);
+        startActivity(intnt);
+        finish();
     }
 
 }

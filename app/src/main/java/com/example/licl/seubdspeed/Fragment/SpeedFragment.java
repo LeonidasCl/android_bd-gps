@@ -143,13 +143,5 @@ public class SpeedFragment extends android.support.v4.app.Fragment {
         mMapView.onSaveInstanceState(outState);
     }
 
-    public String getNodeID() {
-        return nodeID;
-    }
-
-    public void setNodeID(String nodeID) {
-        this.nodeID = nodeID;
-    }
-
 
 }

@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.LatLng;
 import com.example.licl.seubdspeed.BDAPPlication;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //private SpeedFragment speedFrag;
     //private boolean hasSpeedFrag=false;
     private LinearLayout fragList=null;
+    private boolean closeFlag=false;
 
     /*private static class CopyFileHandler extends Handler {
         WeakReference<MainActivity> mActivity;
@@ -81,13 +84,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    public LinearLayout getFragList() {
-        return fragList;
-    }
-
-    public void setFragList(LinearLayout fragList) {
-        this.fragList = fragList;
-    }
 
 
     public class connectTask extends AsyncTask<String,String,TCPClient>{
@@ -236,7 +232,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragmentTrs.commit();
         hasSpeedFrag=true;*/
         Intent intnt=new Intent(MainActivity.this,SpeedActivity.class);
+        intnt.putExtra("nid",nodeID);
         startActivity(intnt);
+
         finish();
     }
 
@@ -325,21 +323,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
     }
 
+    Runnable runnable=new Runnable() {
+        @Override
+        public void run() {
+            closeFlag=false;
+            handler.removeCallbacks(runnable);
+        }
+    };
+
     @Override
     public void onBackPressed(){//TODO crash bugfix
         fragmentTrs=fragmentMgr.beginTransaction();
-        /*if (hasSpeedFrag&&speedFrag!=null){
-            if (speedFrag.getaMap()!=null){
-            speedFrag.getaMap().onPause();
-            speedFrag.getaMap().onDestroy();}
-            fragmentTrs.hide(speedFrag);
-            //speedFrag=null;
-            hasSpeedFrag=false;
-            fragList.setVisibility(View.VISIBLE);
-        }*/
         setSelected();
         main.setSelected(true);
         toMain();
         fragmentTrs.commit();
+
+        if (!closeFlag){
+            closeFlag=true;
+            Toast.makeText(MainActivity.this,"再点击一次退出应用",Toast.LENGTH_SHORT);
+            handler.postDelayed(runnable, 3000);
+            return;
+        }else {
+            finish();
+        }
+
     }
 }
