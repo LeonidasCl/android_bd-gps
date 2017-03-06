@@ -1,5 +1,6 @@
 package com.example.licl.seubdspeed.Activity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -19,19 +20,15 @@ import com.example.licl.seubdspeed.BDAPPlication;
 import com.example.licl.seubdspeed.Fragment.AboutFragment;
 import com.example.licl.seubdspeed.Fragment.DevicesFragment;
 import com.example.licl.seubdspeed.Fragment.MainFragment;
-import com.example.licl.seubdspeed.Fragment.SpeedFragment;
+//import com.example.licl.seubdspeed.Fragment.SpeedFragment;
 import com.example.licl.seubdspeed.Model.NodeHistory;
 import com.example.licl.seubdspeed.Model.SinglePosition;
 import com.example.licl.seubdspeed.Model.Transmition;
 import com.example.licl.seubdspeed.R;
-import com.example.licl.seubdspeed.Util.Status;
 import com.example.licl.seubdspeed.Util.TCPClient;
 import com.google.gson.Gson;
-
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -45,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Fragment aboutFrag;
     private TCPClient mTcpClient = null;
     private connectTask conctTask = null;
-    private SpeedFragment speedFrag;
-    private boolean hasSpeedFrag=false;
+    //private SpeedFragment speedFrag;
+    //private boolean hasSpeedFrag=false;
     private LinearLayout fragList=null;
 
     /*private static class CopyFileHandler extends Handler {
@@ -140,9 +137,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         float distance = AMapUtils.calculateLineDistance(oldposition.getPosition(),newposition.getPosition());
                                         int v= (int) (distance/timetime);
                                         historyDatas.get(i).getSpeed().add(v);
-                                        if (hasSpeedFrag&&speedFrag.getNodeID().equals(data.getID())){//如果此时显示的是测速仪表盘，更新速度和路径线
+                                        /*if (hasSpeedFrag&&speedFrag.getNodeID().equals(data.getID())){//如果此时显示的是测速仪表盘，更新速度和路径线
                                             speedFrag.update(v);
-                                        }
+                                        }*/
                                     }
                                 }
                             }
@@ -215,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void toSpeed(String nodeID){//切换到速度仪表盘
-        fragmentTrs=fragmentMgr.beginTransaction();
+       /* fragmentTrs=fragmentMgr.beginTransaction();
         if(mainFrag != null){
             fragmentTrs.hide(mainFrag);
         }
@@ -237,7 +234,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         speedFrag.setNodeID(nodeID);
         fragmentTrs.show(speedFrag);
         fragmentTrs.commit();
-        hasSpeedFrag=true;
+        hasSpeedFrag=true;*/
+        Intent intnt=new Intent(MainActivity.this,SpeedActivity.class);
+        startActivity(intnt);
+        finish();
     }
 
     private void toAbout(){
@@ -307,7 +307,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         super.onStop();
     }
-
     @Override
     protected void onDestroy()
     {
@@ -329,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed(){//TODO crash bugfix
         fragmentTrs=fragmentMgr.beginTransaction();
-        if (hasSpeedFrag&&speedFrag!=null){
+        /*if (hasSpeedFrag&&speedFrag!=null){
             if (speedFrag.getaMap()!=null){
             speedFrag.getaMap().onPause();
             speedFrag.getaMap().onDestroy();}
@@ -337,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //speedFrag=null;
             hasSpeedFrag=false;
             fragList.setVisibility(View.VISIBLE);
-        }
+        }*/
         setSelected();
         main.setSelected(true);
         toMain();

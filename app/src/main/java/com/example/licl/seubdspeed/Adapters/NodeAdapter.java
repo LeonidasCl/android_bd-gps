@@ -17,7 +17,6 @@ import com.example.licl.seubdspeed.Activity.DeviceTransActivity;
 import com.example.licl.seubdspeed.Activity.MainActivity;
 import com.example.licl.seubdspeed.BDAPPlication;
 import com.example.licl.seubdspeed.Fragment.MainFragment;
-import com.example.licl.seubdspeed.Fragment.SpeedFragment;
 import com.example.licl.seubdspeed.Model.Node;
 import com.example.licl.seubdspeed.R;
 

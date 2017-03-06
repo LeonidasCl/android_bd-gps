@@ -239,7 +239,7 @@ public class DeviceTransActivity extends Activity
     }
 
     @Override
-    public void onBackPressed() {//返回的时候直接销毁，不保存在后台
+    public void onBackPressed(){//返回的时候直接销毁，不保存在后台
         this.onStop();
         this.onDestroy();
         super.onBackPressed();
